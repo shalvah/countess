@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<style>
+    body {
+        font-family: "Lucida Console", monospace, sans-serif;
+        padding: 30px;
+    }
+</style>
+    <h2 align="center" id="visitorCount">{{ visitor_count }}</h2>
+    <p align="center">person(s) currently viewing this page</p>
+{% endblock %}
