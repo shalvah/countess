@@ -15,15 +15,16 @@
 
     <script src="https://js.pusher.com/4.2/pusher.min.js"></script>
     <script>
-        var pusher = new Pusher("{{ pusherKey }}", {
+        let pusher = new Pusher("{{ pusherKey }}", {
             cluster: "{{ pusherCluster }}",
         });
+        let channelName = Date.now() + Math.random().toString(36).replace(/\W+/g, '');
+        pusher.subscribe(channelName);
         pusher.subscribe("visitor-updates")
-            .bind('pusher:subscription_succeeded', function () {
-                pusher.subscribe(Date.now() + Math.random().toString(36).replace(/\W+/g, ''));
-            })
             .bind('update', function (data) {
-                document.getElementById('visitorCount').textContent = data.newCount;
+                console.log(data)
+                let newCount = data.newCount;
+                document.getElementById('visitorCount').textContent = newCount;
             });
     </script>
 {% endblock %}

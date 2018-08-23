@@ -32,19 +32,21 @@ class HomeController extends AbstractController
         foreach ($events as $event) {
             // ignore any events from our public channel--it's only for broadcasting
             if ($event['channel'] === 'visitor-updates') {
-                return;
+                continue;
             }
             $visitorCount += ($event['name'] === 'channel_occupied') ? 1 : -1;
         }
-        // save new figure and notify all clients
-        $this->saveVisitorCount($visitorCount);
-        $pusher->trigger('visitor-updates', 'update', ['newCount' => $visitorCount]);
+            // save new figure and notify all clients
+            $this->saveVisitorCount($visitorCount);
+            $pusher->trigger('visitor-updates', 'update', [
+                'newCount' => $visitorCount,
+            ]);
         return new Response();
     }
 
     private function getVisitorCount()
     {
-        return $this->cache->get('visitorCount') ?: 1;
+        return $this->cache->get('visitorCount') ?: 0;
     }
 
     private function saveVisitorCount($visitorCount)

@@ -1,5 +1,5 @@
 index:
-    path: /
+    path: /home
     controller: App\Controller\HomeController::index
 webhook:
     path: /webhook
