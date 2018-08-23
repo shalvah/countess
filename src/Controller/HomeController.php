@@ -2,10 +2,18 @@
 
 namespace App\Controller;
 
+use Psr\SimpleCache\CacheInterface;
+use Pusher\Pusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
 class HomeController extends AbstractController
 {
+    public function __construct(CacheInterface $cache)
+    {
+        $this->cache = $cache;
+    }
+
     public function index()
     {
         $visitorCount = $this->getVisitorCount();
@@ -16,8 +24,30 @@ class HomeController extends AbstractController
         ]);
     }
 
+    public function webhook(Request $request, Pusher $pusher)
+    {
+        $events = $request->request->get('events');
+        $visitorCount = $this->getVisitorCount();
+        foreach ($events as $event) {
+            // ignore any events from our public channel--it's only for broadcasting
+            if ($event['channel'] === 'visitor-updates') {
+                return;
+            }
+            $visitorCount += ($event['name'] === 'channel_occupied') ? 1 : -1;
+        }
+        // save new figure and notify all clients
+        $this->saveVisitorCount($visitorCount);
+        $pusher->trigger('visitor-updates', 'update', ['newCount' => $visitorCount]);
+    }
+
     private function getVisitorCount()
     {
-        return 0;
+        return $this->cache->get('visitorCount') ?: 0;
     }
+
+    private function saveVisitorCount($visitorCount)
+    {
+        $this->cache->set('visitorCount', $visitorCount);
+    }
+
 }
