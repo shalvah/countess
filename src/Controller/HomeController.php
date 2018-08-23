@@ -6,6 +6,7 @@ use Psr\SimpleCache\CacheInterface;
 use Pusher\Pusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class HomeController extends AbstractController
 {
@@ -26,7 +27,7 @@ class HomeController extends AbstractController
 
     public function webhook(Request $request, Pusher $pusher)
     {
-        $events = $request->request->get('events');
+        $events = json_decode($request->getContent(), true)['events'];
         $visitorCount = $this->getVisitorCount();
         foreach ($events as $event) {
             // ignore any events from our public channel--it's only for broadcasting
@@ -38,11 +39,12 @@ class HomeController extends AbstractController
         // save new figure and notify all clients
         $this->saveVisitorCount($visitorCount);
         $pusher->trigger('visitor-updates', 'update', ['newCount' => $visitorCount]);
+        return new Response();
     }
 
     private function getVisitorCount()
     {
-        return $this->cache->get('visitorCount') ?: 0;
+        return $this->cache->get('visitorCount') ?: 1;
     }
 
     private function saveVisitorCount($visitorCount)
