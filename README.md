@@ -2,8 +2,7 @@
 
 Realtime site visitors count using Pusher Channels
 
-
-[View tutorial]()
+[Read the tutorial](https://pusher.com/tutorials/online-presence-counter-symfony)
 
 ## Prerequisites
 - PHP >= 7.1.3
