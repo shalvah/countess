@@ -7,6 +7,23 @@
         padding: 30px;
     }
 </style>
-    <h2 align="center" id="visitorCount">{{ visitor_count }}</h2>
+    <h2 align="center" id="visitorCount">{{ visitorCount }}</h2>
     <p align="center">person(s) currently viewing this page</p>
+{% endblock %}
+
+{% block javascripts %}
+
+    <script src="https://js.pusher.com/4.2/pusher.min.js"></script>
+    <script>
+        var pusher = new Pusher("{{ pusherKey }}", {
+            cluster: "{{ pusherCluster }}",
+        });
+        pusher.subscribe("visitor-updates")
+            .bind('pusher:subscription_succeeded', function () {
+                pusher.subscribe(Date.now() + Math.random().toString(36).replace(/\W+/g, ''));
+            })
+            .bind('update', function (data) {
+                document.getElementById('visitorCount').textContent = data.newCount;
+            });
+    </script>
 {% endblock %}
