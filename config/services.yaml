@@ -5,6 +5,9 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
+    pusherKey: '%env(PUSHER_KEY)%'
+    pusherCluster: '%env(PUSHER_CLUSTER)%'
+
 
 services:
     # default configuration for services in *this* file

@@ -10,7 +10,9 @@ class HomeController extends AbstractController
     {
         $visitorCount = $this->getVisitorCount();
         return $this->render('index.html.twig', [
-            'visitor_count' => $visitorCount,
+            'pusherKey' => $this->getParameter('pusherKey'),
+            'pusherCluster' => $this->getParameter('pusherCluster'),
+            'visitorCount' => $visitorCount,
         ]);
     }
 
